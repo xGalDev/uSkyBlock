@@ -190,7 +190,13 @@ public class PlayerEvents implements Listener {
         Player p2 = (Player) event.getEntity();
         if (event.getDamager() instanceof Player) {
             Player p1 = (Player) event.getDamager();
-            cancelMemberDamage(p1, p2, event);
+            if (!Settings.island_allowPvP
+                && ((visitorFireProtected && FIRE_TRAP.contains(event.getCause()))
+                || (visitorFallProtected && (event.getCause() == EntityDamageEvent.DamageCause.FALL)))
+                && event.getEntity() instanceof Player
+                && !plugin.playerIsOnIsland((Player) event.getEntity())) {
+                cancelMemberDamage(p1, p2, event);
+            }
         } else if (event.getDamager() instanceof Projectile
                 && !(event.getDamager() instanceof EnderPearl)) {
             ProjectileSource shooter = ((Projectile) event.getDamager()).getShooter();
